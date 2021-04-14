@@ -100,5 +100,22 @@ mongoose.connect(DataBase, {useNewUrlParser: true, useUnifiedTopology: true}).th
 				.catch(err => console.log(err));
 			}
 		});
+
+		app.get('/appointment/export', (req, res) => {
+			let exec = require('child_process').exec
+			let command = 'mongoexport -d covid19 -c appointments -o output.json'
+			exec(command, (error, stdout, stderr) => {
+				if (error) {
+					console.log(`error: ${error}`);res.send(error);
+				} else if (stderr) {
+					console.log(`stderr: ${stderr}`);res.send(stderr);
+				} else if (stdout) {
+					console.log(`stdout: ${stdout}`);
+					res.send(stdout);
+				} else { 
+					res.send('Error'); 
+				}
+			})
+		})
 	}
 ).catch(err => console.log(err))
