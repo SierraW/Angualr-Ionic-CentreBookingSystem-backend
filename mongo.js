@@ -102,17 +102,25 @@ mongoose.connect(DataBase, {useNewUrlParser: true, useUnifiedTopology: true}).th
 		});
 
 		app.get('/appointment/export', (req, res) => {
-			let exec = require('child_process').exec
-			let command = 'mongoexport -d covid19 -c appointments -o output.json'
+			let exec = require('child_process').exec;
+			let command = '.\\mongoexport.exe -d covid19 -c appointments -o output.json';
 			exec(command, (error, stdout, stderr) => {
 				if (error) {
-					console.log(`error: ${error}`);res.send(error);
+					console.log(`error: ${error}`);
+					res.send(error);
 				} else if (stderr) {
-					console.log(`stderr: ${stderr}`);res.send(stderr);
+					console.log(`stderr: ${stderr}`)
+					if (stderr.split('\n')[1] !== undefined && stderr.split('\n')[1].split('\t')[1] !== undefined) {
+						res.send({message: stderr.split('\n')[1].split('\t')[1]})
+					} else {
+						console.log(`stderr: ${stderr}`);
+					res.send(stderr);
+					}
 				} else if (stdout) {
 					console.log(`stdout: ${stdout}`);
 					res.send(stdout);
-				} else { 
+				} else {
+					console.log('am i here?')
 					res.send('Error'); 
 				}
 			})
